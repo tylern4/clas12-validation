@@ -42,14 +42,16 @@ def make_list(args):
     return l
 
 
-def do_sim(base):
+def do_gemc(base):
     cwd = os.getcwd()
     with tempdir() as dirpath:
         shutil.copyfile(cwd + "/clas12.gcard", dirpath + "/clas12.gcard")
         shutil.copyfile(cwd + "/do_sim.sh", dirpath + "/do_sim.sh")
 
-        out = os.system(
-            "docker run -v`pwd`:/jlab/workdir --rm -it jeffersonlab/clas12tags:4a.2.4 bash /jlab/workdir/do_sim.sh 1> out 2> err")
+        command = "docker run -v`pwd`:/jlab/workdir --rm -it jeffersonlab/clas12tags:4a.2.4 bash /jlab/workdir/do_sim.sh "
+        events = 10000
+        command += "-N="+str(events)
+        out = os.system(command + " 2>/dev/null 1>/dev/null")
         shutil.copy(dirpath + "/out.evio", base + ".evio")
 
 
@@ -61,7 +63,10 @@ def main():
     parser.add_argument('-n', dest='num', type=int, nargs='?',
                         help="Number of simulations to do", default=100)
     parser.add_argument('-o', dest='output', type=str, nargs='?',
-                        help="Output directory for final root files", default=".")
+                        help="Output directory for final root files", default=os.getcwd())
+    parser.add_argument('-e', dest='events', type=int, nargs='?',
+                        help="Number of events to simulate", default=1000)
+
 
     args = parser.parse_args()
 
@@ -69,14 +74,16 @@ def main():
         args.output = args.output + '/'
     if args.cores == 0 or cpu_count > cpu_count():
         args.cores = cpu_count()
+    if args.output[0] != '/':
+        args.output = os.getcwd() + args.output
 
     files = make_list(args)
     pool = Pool(processes=args.cores)
 
-    if False:
-        pool.imap_unordered(do_sim, files)
+    if True:
+        pool.imap_unordered(do_gemc, files)
     else:
-        for _ in tqdm.tqdm(pool.imap_unordered(do_sim, files), total=args.num):
+        for _ in tqdm.tqdm(pool.imap_unordered(do_gemc, files), total=args.num):
             pass
 
     pool.close()

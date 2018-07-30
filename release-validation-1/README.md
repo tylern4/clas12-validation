@@ -7,6 +7,7 @@ sudo docker run -it -v $PWD/:/jlab/workdir/shared --rm jeffersonlab/clas12tags:4
 * From the docker container, run GEMC:
 ```
 gemc clas12.gcard -INPUT_GEN_FILE="LUND, shared/11gev_sidis_500.dat" -USE_GUI=0 -N=500 -PRINT_EVENT=20 -RUNNO=11 -OUTPUT="evio, shared/out.evio"
+exit # exit docker, do the remaining steps from your normal shell
 ```
 * Tip: divide up the lund file and run several instances of GEMC:
 ```
@@ -44,3 +45,8 @@ echo "exit" >> cook.clara
 $CLARA_HOME/bin/clara-shell cook.clara
 ```
 
+## Analysis
+```
+mvn install
+mvn exec:java -Dexec.mainClass="org.jlab.c12val.ParticleCounter"
+```

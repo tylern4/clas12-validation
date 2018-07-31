@@ -75,8 +75,7 @@ def split_lund(file_name, files):
 def do_gemc(base):
     cwd = os.getcwd()
     with tempdir() as dir_temp:
-        #shutil.copy(base + ".dat", dir_temp + "/input.dat")
-        shutil.copy(cwd+"/11gev_sidis_500.dat", dir_temp + "/input.dat")
+        shutil.copy(base + ".dat", dir_temp + "/input.dat")
         with open(dir_temp + "/do_sim.sh", "w") as text_file:
             text_file.write(r"""#!/bin/bash
             source /jlab/2.2/ce/jlab.sh 2> /dev/null
@@ -109,7 +108,7 @@ def main():
         args.cores = cpu_count()
 
     files = make_names(args.output_dir, args.cores)
-    #split_lund(args.events, files)
+    split_lund(args.events, files)
     pool = Pool(processes=args.cores)
     pool.imap_unordered(do_gemc, files)
     pool.close()

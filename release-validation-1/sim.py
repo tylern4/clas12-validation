@@ -2,7 +2,6 @@
 from __future__ import print_function
 from multiprocessing import Pool, cpu_count
 import multiprocessing as mp
-import tqdm
 import argparse
 import sys
 import glob
@@ -45,14 +44,18 @@ def make_list(args):
 def do_gemc(base):
     cwd = os.getcwd()
     with tempdir() as dirpath:
-        shutil.copyfile(cwd + "/clas12.gcard", dirpath + "/clas12.gcard")
-        shutil.copyfile(cwd + "/do_sim.sh", dirpath + "/do_sim.sh")
+        with open(dirpath + "/do_sim.sh", "w") as text_file:
+            text_file.write(r"""#!/bin/bash
+            source /jlab/2.2/ce/jlab.sh 2> /dev/null
+            /jlab/clas12Tags/4a.2.4/source/gemc clas12.gcard -USE_GUI=0 $@
+            """)
 
         command = "docker run -v`pwd`:/jlab/workdir --rm -it jeffersonlab/clas12tags:4a.2.4 bash /jlab/workdir/do_sim.sh "
-        events = 10000
-        command += "-N="+str(events)
-        out = os.system(command + " 2>/dev/null 1>/dev/null")
-        shutil.copy(dirpath + "/out.evio", base + ".evio")
+        out = " 1>" + base + ".out"
+        err = " 2>" + base + ".err"
+        command = command + err + out
+        os.system(command)
+        #shutil.copy(dirpath + "/out.evio", base + ".evio")
 
 
 def main():
@@ -67,7 +70,6 @@ def main():
     parser.add_argument('-e', dest='events', type=int, nargs='?',
                         help="Number of events to simulate", default=1000)
 
-
     args = parser.parse_args()
 
     if args.output[-1] != '/':
@@ -79,13 +81,7 @@ def main():
 
     files = make_list(args)
     pool = Pool(processes=args.cores)
-
-    if True:
-        pool.imap_unordered(do_gemc, files)
-    else:
-        for _ in tqdm.tqdm(pool.imap_unordered(do_gemc, files), total=args.num):
-            pass
-
+    pool.imap_unordered(do_gemc, files)
     pool.close()
     pool.join()
 

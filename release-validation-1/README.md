@@ -1,3 +1,17 @@
+## Python Script
+The `sim.py` script will run gemc over a desired lund file, specified by `-i` (defaults to 11gev_sidis_500.dat) and output all lunds/output/error/evio to the output folder (currently you must specify the full path).
+The number of processes you want to start can be controlled with the `-c` option or left blank to create as many processes as cores.
+```
+./sim.py -i input_lund.dat -o /full/path/to/output/folder
+```
+
+The goal is to slowly add features to the script so that it will work to complete the whole chain from a single script.
+- [x] Run gemc over a lund file
+- [ ] Convert evio to hipo
+- [ ] Run reconstruction over the hipo file
+- [ ] Run validation over reconstructed files
+
+
 ## GEMC
 * On Fedora or similar Linux versions, start Docker and run the GEMC image:
 ```

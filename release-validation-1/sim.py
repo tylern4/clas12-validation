@@ -70,6 +70,7 @@ def split_lund(file_name, files):
                 num_e = int(re.findall(r'\d+', line)[0]) + 1
                 for x in range(num_e):
                     f2.write(lines[line_num + x])
+        f2.close()
 
 
 def do_gemc(base):
@@ -79,10 +80,10 @@ def do_gemc(base):
         with open(dir_temp + "/do_sim.sh", "w") as text_file:
             text_file.write(r"""#!/bin/bash
             source /jlab/2.2/ce/jlab.sh 2> /dev/null
-            /jlab/clas12Tags/4a.2.4/source/gemc clas12.gcard -USE_GUI=0 $@ -OUTPUT="evio, out.evio" -INPUT_GEN_FILE="LUND, input.dat"
+            /jlab/clas12Tags/4a.2.4/source/gemc /jlab/workdir/clas12.gcard -USE_GUI=0 -OUTPUT="evio, /jlab/workdir/shared/out.evio" -INPUT_GEN_FILE="LUND, /jlab/workdir/shared/input.dat"
             """)
 
-        command = "docker run -v`pwd`:/jlab/workdir --rm -it jeffersonlab/clas12tags:4a.2.4 bash /jlab/workdir/do_sim.sh "
+        command = "docker run -v`pwd`:/jlab/workdir/shared --rm -it jeffersonlab/clas12software:0.1 bash /jlab/workdir/shared/do_sim.sh "
         out = " 1>" + base + ".out"
         err = " 2>" + base + ".err"
         command = command + err + out

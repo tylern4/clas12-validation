@@ -71,9 +71,11 @@ public class ParticleCounter {
 
 
   public void printResults() {
-    System.out.printf("%-7s %-7s %-7s %n", "pid", "#gen", "#rec");
+    System.out.printf("%-7s %-7s %-7s %-7s %n", "pid", "#gen", "#rec", "#percent");
     for(int i = 0; i < pids.size(); i++) {
-      System.out.printf("%-7d %-7d %-7d %n", pids.get(i), genCounts.get(i), recCounts.get(i));
+        if(genCounts.get(i) >0) {
+            System.out.printf("%-7d %-7d %-7d %-2f %n", pids.get(i), genCounts.get(i), recCounts.get(i), 100.0*recCounts.get(i)/genCounts.get(i));
+        }
     }
   }
 

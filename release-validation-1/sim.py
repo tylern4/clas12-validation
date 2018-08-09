@@ -33,11 +33,12 @@ def tempdir():
         yield dirpath
 
 
-def make_names(output_dir, num):
+def make_names(output_dir, input_file, num):
     time = datetime.now().strftime('%m_%d_%Y-%H%M_')
+    input_file = input_file[:-4]
     l = []
     for i in range(0, num):
-        l.append(output_dir + "sim_" + time + str(i))
+        l.append(output_dir + input_file + "_" + time + str(i))
     return l
 
 
@@ -80,14 +81,15 @@ def do_gemc(base):
         with open(dir_temp + "/do_sim.sh", "w") as text_file:
             text_file.write(r"""#!/bin/bash
             source /jlab/2.2/ce/jlab.sh 2> /dev/null
+
             /jlab/clas12Tags/4a.2.4/source/gemc /jlab/workdir/clas12.gcard -USE_GUI=0 -OUTPUT="evio, /jlab/workdir/shared/out.evio" -INPUT_GEN_FILE="LUND, /jlab/workdir/shared/input.dat"
             """)
 
-        command = "docker run -v`pwd`:/jlab/workdir/shared --rm -it jeffersonlab/clas12software:0.1 bash /jlab/workdir/shared/do_sim.sh "
+        command = "docker run -v`pwd`:/jlab/workdir/shared --rm -it jeffersonlab/clas12tags:4a.2.4 bash /jlab/workdir/shared/do_sim.sh "
         out = " 1>" + base + ".out"
         err = " 2>" + base + ".err"
         command = command + err + out
-        exit_code = os.system(command)
+        exit_code = os.system(command + " && exit 0")
         shutil.copy(dir_temp + "/out.evio", base + ".evio")
 
 
@@ -108,7 +110,7 @@ def main():
     if args.cores == 0 or args.cores > cpu_count():
         args.cores = cpu_count()
 
-    files = make_names(args.output_dir, args.cores)
+    files = make_names(args.output_dir, args.events, args.cores)
     split_lund(args.events, files)
     pool = Pool(processes=args.cores)
     pool.imap_unordered(do_gemc, files)

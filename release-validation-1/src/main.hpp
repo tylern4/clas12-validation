@@ -70,12 +70,17 @@ void datahandeler(std::string fin, std::string fout) {
     chain->GetEntry(current_event);
     if (pid->size() == 0) continue;
 
-    per = ((double)current_event / (double)num_of_events);
+    per = ((1 + (double)current_event) / (double)num_of_events);
     std::cerr << "\t\t" << std::floor(100 * per) << "%\r\r" << std::flush;
     try {
-      event_P = TMath::Sqrt((px->at(0) * px->at(0)) + (py->at(0) * py->at(0)) + (pz->at(0) * pz->at(0)));
-      mc_P = TMath::Sqrt((mc_px->at(0) * mc_px->at(0)) + (mc_py->at(0) * mc_py->at(0)) + (mc_pz->at(0) * mc_pz->at(0)));
-      hist->Fill_Res(px->at(0), py->at(0), pz->at(0), event_P, mc_px->at(0), mc_py->at(0), mc_pz->at(0), mc_P);
+      for (int index = 0; index < pid->size(); index++) {
+        event_P = TMath::Sqrt((px->at(index) * px->at(index)) + (py->at(index) * py->at(index)) +
+                              (pz->at(index) * pz->at(index)));
+        mc_P = TMath::Sqrt((mc_px->at(index) * mc_px->at(index)) + (mc_py->at(index) * mc_py->at(index)) +
+                           (mc_pz->at(index) * mc_pz->at(index)));
+        hist->Fill_Res(px->at(index), py->at(index), pz->at(index), event_P, mc_px->at(index), mc_py->at(index),
+                       mc_pz->at(index), mc_P);
+      }
     } catch (std::exception &e) {
       total++;
       continue;
@@ -87,7 +92,7 @@ void datahandeler(std::string fin, std::string fout) {
   out->Close();
   chain->Reset();
 
-  if (total > 0) std::cout << RED << "Event Errors: " << total << RESET << std::endl;
+  if (total > 0) std::cout << RED << "Errors: " << total << RESET << std::endl;
 }
 
 #endif

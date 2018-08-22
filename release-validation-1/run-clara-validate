@@ -40,7 +40,7 @@ fi
 
 # set default classpath
 if [ -z "${CLASSPATH}" ]; then
-  CLASSPATH="${CLARA_HOME}/lib/*"
+  CLASSPATH="${CLARA_HOME}/lib/*:${CLARA_HOME}/plugins/clas12/lib/services/*"
   if [ -z ${CLAS12DIR+x} ]; then
     for plugin in "${plugins_dir}"/*/; do
       plugin=${plugin%*/}
@@ -67,4 +67,3 @@ fi
 java_wrapper=${CLARA_HOME}/lib/clara/run-java
 
 exec "${java_wrapper}" "${jvm_options[@]}" org.jlab.clara.std.cli.ClaraShell "$@"
-

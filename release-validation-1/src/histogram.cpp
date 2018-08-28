@@ -17,9 +17,9 @@ void Histogram::Fill_Res(double _px, double _py, double _pz, double _P, double _
   momentum_y->Fill(_py);
   momentum_z->Fill(_pz);
 
-  momentum_x_y->Fill(_px, _py);
-  momentum_x_z->Fill(_px, _pz);
-  momentum_y_z->Fill(_py, _pz);
+  mom_rvg_x->Fill(_mc_px, _px);
+  mom_rvg_y->Fill(_mc_py, _py);
+  mom_rvg_z->Fill(_mc_pz, _pz);
 
   resolution->Fill(_P - _mc_P);
   resolution_x->Fill(_px - _mc_px);
@@ -38,18 +38,18 @@ void Histogram::Write() {
   momentum_z->SetXTitle("momentum (GeV)");
   momentum_z->Write();
 
-  momentum_x_y->SetXTitle("momentum X (GeV)");
-  momentum_x_y->SetYTitle("momentum Y (GeV)");
-  momentum_x_y->SetOption("COLZ");
-  momentum_x_y->Write();
-  momentum_x_z->SetXTitle("momentum X (GeV)");
-  momentum_x_z->SetYTitle("momentum Z (GeV)");
-  momentum_x_z->SetOption("COLZ");
-  momentum_x_z->Write();
-  momentum_y_z->SetXTitle("momentum Y (GeV)");
-  momentum_y_z->SetYTitle("momentum Z (GeV)");
-  momentum_y_z->SetOption("COLZ");
-  momentum_y_z->Write();
+  mom_rvg_x->SetXTitle("Gen X (GeV)");
+  mom_rvg_x->SetYTitle("Rec X (GeV)");
+  mom_rvg_x->SetOption("COLZ");
+  mom_rvg_x->Write();
+  mom_rvg_y->SetXTitle("Gen Y (GeV)");
+  mom_rvg_y->SetYTitle("Rec Y (GeV)");
+  mom_rvg_y->SetOption("COLZ");
+  mom_rvg_y->Write();
+  mom_rvg_z->SetXTitle("Gen Z (GeV)");
+  mom_rvg_z->SetYTitle("Rec Z (GeV)");
+  mom_rvg_z->SetOption("COLZ");
+  mom_rvg_z->Write();
 
   resolution->SetXTitle("momentum (GeV)");
   resolution->Fit("gaus", "QM+");

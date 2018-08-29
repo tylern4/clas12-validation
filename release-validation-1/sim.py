@@ -49,7 +49,7 @@ def split_lund(file_name, files):
     with open(file_name, "r") as text_file:
         lines = text_file.readlines()
         for line in lines:
-            if line.startswith("          "):
+            if line.startswith("        "):
                 num_events += 1
 
         out = 0
@@ -66,7 +66,7 @@ def split_lund(file_name, files):
                 else:
                     break
 
-            if line.startswith("          "):
+            if line.startswith("        "):
                 tot += 1
                 num_e = int(re.findall(r'\d+', line)[0]) + 1
                 for x in range(num_e):
@@ -83,11 +83,13 @@ def do_gemc(base):
             text_file.write("source /jlab/2.2/ce/jlab.sh \n")
             text_file.write(
                 "/jlab/clas12Tags/4a.2.4/source/gemc /jlab/workdir/clas12.gcard -USE_GUI=0 -OUTPUT=\"evio, /jlab/workdir/shared/out.evio\" -INPUT_GEN_FILE=\"LUND, /jlab/workdir/shared/input.dat\" \n\n")
+            text_file.write("echo \"Gemc Exit Code: \" $? \n")
             text_file.write("\n")
 
-        command = "docker run -v`pwd`:/jlab/workdir/shared --rm -it jeffersonlab/clas12tags:4a.2.4 bash /jlab/workdir/shared/do_sim.sh > /dev/null 2>&1"
-        exit_code = os.system(command)
-        print(exit_code)
+        command = "docker run -v`pwd`:/jlab/workdir/shared --rm -it jeffersonlab/clas12tags:4a.2.4 bash /jlab/workdir/shared/do_sim.sh"
+        out = " 1>" + base + ".out"
+        err = " 2>" + base + ".err"
+        exit_code = os.system(command + out + err)
         shutil.copy(dir_temp + "/out.evio", base + ".evio")
 
 

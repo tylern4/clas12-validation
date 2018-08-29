@@ -21,8 +21,7 @@ def gen_lund(args):
             output.write("\n")
 
             if(args.sigma > 0):
-                energy = args.energy + \
-                    float(np.random.normal(0.0, args.sigma, 1))
+                energy = args.energy
                 theta = args.theta + \
                     float(np.random.normal(0.0, args.sigma, 1))
                 phi = args.phi + float(np.random.normal(0.0, args.sigma, 1))

@@ -1,19 +1,23 @@
 #!/usr/bin/env bash
 mkdir -p validate
-python sim.py -o $PWD/validate 2> /dev/null 1> /dev/null
+python sim.py -o validate
 
-evio2hipo out.hipo validate/*.evio
+echo "evio2hipo"
+cd validate
+evio2hipo -r 11 -t -1.0 -s -1.0 -o out.hipo *.evio
 
-echo "out.hipo" validate/files.list
+echo "out.hipo" > files.list
 
-echo "set inputDir $PWD/validate" > cook.clara
+echo "set inputDir $PWD" > cook.clara
 echo "set outputDir $PWD" >> cook.clara
 echo "set threads $(nproc)" >> cook.clara
 echo "set javaMemory 4" >> cook.clara
-echo "set fileList $PWD/validate/files.list" >> cook.clara
+echo "set fileList $PWD/files.list" >> cook.clara
 echo "run local" >> cook.clara
 echo "exit" >> cook.clara
-#clara-shell cook.clara
+echo "CLARA"
+../run-clara-validate cook.clara
 
-
-#mvn install && mvn exec:java -Dexec.mainClass="org.jlab.c12val.ParticleCounter"
+cd ..
+cp validate/out_out.hipo .
+mvn install && mvn exec:java -Dexec.mainClass="org.jlab.c12val.ParticleCounter"

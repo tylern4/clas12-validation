@@ -1,0 +1,7 @@
+
+*.ipynb
+*.o
+*.root
+release-validation-1/src/validate
+release-validation-1/test
+release-validation-1/validate

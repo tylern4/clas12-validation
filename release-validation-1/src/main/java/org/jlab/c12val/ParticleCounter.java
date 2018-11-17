@@ -83,7 +83,7 @@ public class ParticleCounter {
   public static void main(String[] args) {
     ParticleCounter pcounter = new ParticleCounter(11, 211, -211, 2212, 321, 22, 2112);
     HipoDataSource reader = new HipoDataSource();
-    reader.open("out_out.hipo");
+    reader.open("out_gemcout.hipo");
     while(reader.hasEvent()) {
       DataEvent event = reader.getNextEvent();
       pcounter.processEvent(event);

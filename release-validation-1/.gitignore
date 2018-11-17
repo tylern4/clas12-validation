@@ -6,4 +6,7 @@ install-claracre-clas.sh
 myclara
 *.evio
 *.hipo
+*.class
+*.swp
 target
+trackingPics

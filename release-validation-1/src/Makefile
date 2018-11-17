@@ -1,7 +1,7 @@
 ROOTLIBS	= $(shell root-config --libs)
 CXX = g++
 CXXFLAGS = -O3 -march=native -fPIC -w -g $(shell root-config --cflags)
-TARGET = validate
+TARGET = validate_elastic
 
 MAINS = histogram.cpp main.cpp
 MAIN = $(MAINS:%.cpp=%.o)

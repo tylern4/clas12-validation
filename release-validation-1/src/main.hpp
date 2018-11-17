@@ -6,8 +6,10 @@
 #ifndef MAIN_H_GUARD
 #define MAIN_H_GUARD
 #include <TFile.h>
+#include <TLorentzVector.h>
 #include <vector>
 #include "TChain.h"
+#include "colors.hpp"
 #include "histogram.hpp"
 
 std::vector<int> *pid;
@@ -25,6 +27,10 @@ std::vector<float> *mc_pz;
 std::vector<float> *mc_vx;
 std::vector<float> *mc_vy;
 std::vector<float> *mc_vz;
+std::vector<float> *mc_E;
+
+// mass in GeV/c2
+static const double MASS_E = 0.000511;
 
 namespace filehandeler {
 void getBranches(TTree *myTree) {
@@ -43,6 +49,7 @@ void getBranches(TTree *myTree) {
   myTree->SetBranchAddress("MC_Particle_vx", &mc_vx);
   myTree->SetBranchAddress("MC_Particle_vy", &mc_vy);
   myTree->SetBranchAddress("MC_Particle_vz", &mc_vz);
+  myTree->SetBranchAddress("MC_Lund_E", &mc_E);
 
   myTree->SetBranchStatus("*", 1);
 }
@@ -65,22 +72,31 @@ void datahandeler(std::string fin, std::string fout) {
 
   int num_of_events = (int)chain->GetEntries();
   Histogram *hist = new Histogram();
+  TLorentzVector e_beam;
+  TLorentzVector e_prime;
+  TVector3 e_prime_P;
+  TLorentzVector mc_e_prime;
+  TVector3 mc_e_prime_P;
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
-    if (pid->size() == 0) continue;
-
     per = ((1 + (double)current_event) / (double)num_of_events);
     std::cerr << "\t\t" << std::floor(100 * per) << "%\r\r" << std::flush;
+
+    if (pid->size() == 0) continue;
+
     try {
-      for (int index = 0; index < pid->size(); index++) {
-        event_P = TMath::Sqrt((px->at(index) * px->at(index)) + (py->at(index) * py->at(index)) +
-                              (pz->at(index) * pz->at(index)));
-        mc_P = TMath::Sqrt((mc_px->at(index) * mc_px->at(index)) + (mc_py->at(index) * mc_py->at(index)) +
-                           (mc_pz->at(index) * mc_pz->at(index)));
-        hist->Fill_Res(px->at(index), py->at(index), pz->at(index), event_P, mc_px->at(index), mc_py->at(index),
-                       mc_pz->at(index), mc_P);
-      }
+      // if (pid->at(0) == 11) {
+      hist->Fill_Res(px->at(0), py->at(0), pz->at(0), mc_px->at(0), mc_py->at(0), mc_pz->at(0));
+      e_beam.SetPxPyPzE(0, 0, mc_E->at(0), mc_E->at(0));
+      e_prime_P.SetXYZ(px->at(0), py->at(0), pz->at(0));
+      e_prime.SetVectM(e_prime_P, MASS_E);
+      mc_e_prime_P.SetXYZ(mc_px->at(0), mc_py->at(0), mc_pz->at(0));
+      mc_e_prime.SetVectM(mc_e_prime_P, MASS_E);
+
+      hist->Fill_WQ2(e_beam, e_prime, mc_e_prime);
+      //}
+
     } catch (std::exception &e) {
       total++;
       continue;

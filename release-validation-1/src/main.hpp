@@ -34,22 +34,22 @@ static const double MASS_E = 0.000511;
 
 namespace filehandeler {
 void getBranches(TTree *myTree) {
-  myTree->SetBranchAddress("REC_Particle_pid", &pid);
-  myTree->SetBranchAddress("REC_Particle_px", &px);
-  myTree->SetBranchAddress("REC_Particle_py", &py);
-  myTree->SetBranchAddress("REC_Particle_pz", &pz);
-  myTree->SetBranchAddress("REC_Particle_vx", &vx);
-  myTree->SetBranchAddress("REC_Particle_vy", &vy);
-  myTree->SetBranchAddress("REC_Particle_vz", &vz);
+  myTree->SetBranchAddress("pid", &pid);
+  myTree->SetBranchAddress("px", &px);
+  myTree->SetBranchAddress("py", &py);
+  myTree->SetBranchAddress("pz", &pz);
+  myTree->SetBranchAddress("vx", &vx);
+  myTree->SetBranchAddress("vy", &vy);
+  myTree->SetBranchAddress("vz", &vz);
 
-  myTree->SetBranchAddress("MC_Particle_pid", &mc_pid);
-  myTree->SetBranchAddress("MC_Particle_px", &mc_px);
-  myTree->SetBranchAddress("MC_Particle_py", &mc_py);
-  myTree->SetBranchAddress("MC_Particle_pz", &mc_pz);
-  myTree->SetBranchAddress("MC_Particle_vx", &mc_vx);
-  myTree->SetBranchAddress("MC_Particle_vy", &mc_vy);
-  myTree->SetBranchAddress("MC_Particle_vz", &mc_vz);
-  myTree->SetBranchAddress("MC_Lund_E", &mc_E);
+  myTree->SetBranchAddress("mc_pid", &mc_pid);
+  myTree->SetBranchAddress("mc_px", &mc_px);
+  myTree->SetBranchAddress("mc_py", &mc_py);
+  myTree->SetBranchAddress("mc_pz", &mc_pz);
+  myTree->SetBranchAddress("mc_vx", &mc_vx);
+  myTree->SetBranchAddress("mc_vy", &mc_vy);
+  myTree->SetBranchAddress("mc_vz", &mc_vz);
+  myTree->SetBranchAddress("lund_E", &mc_E);
 
   myTree->SetBranchStatus("*", 1);
 }
